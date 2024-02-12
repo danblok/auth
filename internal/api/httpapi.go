@@ -50,7 +50,7 @@ func makeHTTPHandler(fn HTTPHandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := fn(ctx, w, r); err != nil {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+			_ = writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		}
 	}
 }
