@@ -49,12 +49,12 @@ func makeHTTPHandler(fn HTTPHandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := fn(ctx, w, r); err != nil {
-			_ = writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+			_ = writeJSON(w, http.StatusBadRequest, HTTPErrResponse{Error: err.Error()})
 		}
 	}
 }
 
-// Handles token validation
+// Handles token validation.
 func (s *HTTPServer) handleTokenValidation(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	token := r.URL.Query().Get("token")
 	if token == "" {
@@ -63,12 +63,12 @@ func (s *HTTPServer) handleTokenValidation(ctx context.Context, w http.ResponseW
 
 	err := s.svc.Validate(ctx, []byte(token))
 	if err != nil {
-		return writeJSON(w, http.StatusBadRequest, map[string]bool{"valid": false})
+		return writeJSON(w, http.StatusBadRequest, types.TokenValidationResponse{Valid: false})
 	}
-	return writeJSON(w, http.StatusOK, map[string]bool{"valid": true})
+	return writeJSON(w, http.StatusOK, types.TokenValidationResponse{Valid: true})
 }
 
-// Handles token sign.
+// Handles token receive.
 func (s *HTTPServer) handleTokenRecieve(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	type body struct {
 		Payload string `json:"payload"`
@@ -86,7 +86,7 @@ func (s *HTTPServer) handleTokenRecieve(ctx context.Context, w http.ResponseWrit
 		return err
 	}
 
-	return writeJSON(w, http.StatusCreated, map[string]string{"token": string(token)})
+	return writeJSON(w, http.StatusCreated, types.TokenResponse{Token: string(token)})
 }
 
 // Helper func for responding with JSON.

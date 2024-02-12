@@ -9,6 +9,7 @@ import (
 	"github.com/danblok/auth/pkg/types"
 )
 
+// JWT claim with support for payload.
 type JWTClaim struct {
 	Payload string `json:"payload"`
 	jwt.RegisteredClaims

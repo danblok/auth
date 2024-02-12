@@ -9,7 +9,7 @@ import (
 	"github.com/danblok/auth/pkg/types"
 )
 
-// Logging for TokenService
+// Logging for TokenService.
 type loggingService struct {
 	svc types.TokenService
 	log *slog.Logger
@@ -41,7 +41,7 @@ func (s *loggingService) Token(ctx context.Context, payload []byte) (token []byt
 	return s.svc.Token(ctx, payload)
 }
 
-// Logs time since start, request_id, err if validation failed
+// Logs time since start, request_id, err if validation failed.
 func (s *loggingService) Validate(ctx context.Context, token []byte) (err error) {
 	defer func(t time.Time) {
 		s.log.InfoContext(
