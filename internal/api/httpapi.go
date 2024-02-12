@@ -42,7 +42,7 @@ func NewHTTPService(svc types.TokenService, addr string) *HTTPServer {
 // Runs the HTTPServer
 func (s *HTTPServer) Run() error {
 	mux := http.NewServeMux()
-	mux.Handle("POST /token", makeHTTPHandler(s.handleTokenRecieve))
+	mux.Handle("POST /token", makeHTTPHandler(s.handleTokenReceive))
 	mux.Handle("GET /validate", makeHTTPHandler(s.handleTokenValidation))
 	s.srv.Handler = mux
 
@@ -75,7 +75,7 @@ func (s *HTTPServer) handleTokenValidation(ctx context.Context, w http.ResponseW
 }
 
 // Handles token receive.
-func (s *HTTPServer) handleTokenRecieve(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func (s *HTTPServer) handleTokenReceive(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	var b Body
 	err := json.NewDecoder(r.Body).Decode(&b)
 	if err != nil {
