@@ -3,3 +3,6 @@ build:
 
 run: build
 	@./bin/server -addr=":4000" -keypath "jwt"
+
+test:
+	go test -v -cover ./...
