@@ -83,6 +83,10 @@ func (s *HTTPServer) handleTokenReceive(ctx context.Context, w http.ResponseWrit
 	}
 	r.Body.Close()
 
+	if b.Payload == "" {
+		return errors.New("incorrect payload")
+	}
+
 	token, err := s.svc.Token(ctx, []byte(b.Payload))
 	if err != nil {
 		return err
