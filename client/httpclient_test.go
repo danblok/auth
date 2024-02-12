@@ -16,7 +16,7 @@ func TestToken(t *testing.T) {
 	svc := service.NewJWTService([]byte("secret"))
 
 	go func() {
-		s := api.NewHTTPService(svc, ":42069")
+		s := api.NewHTTPServer(svc, ":42069")
 		_ = s.Run()
 	}()
 
@@ -51,7 +51,7 @@ func TestValidate(t *testing.T) {
 	tkn, _ := svc.Token(ctx, payload)
 
 	go func() {
-		s := api.NewHTTPService(svc, ":42069")
+		s := api.NewHTTPServer(svc, ":42069")
 		_ = s.Run()
 	}()
 

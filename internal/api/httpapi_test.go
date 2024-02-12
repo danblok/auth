@@ -40,7 +40,7 @@ func TestHandleTokenReceive(t *testing.T) {
 	}
 
 	svc := service.NewJWTService([]byte("secret-key"))
-	srv := NewHTTPService(svc, "localhost:3000")
+	srv := NewHTTPServer(svc, "localhost:3000")
 
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -60,7 +60,7 @@ func TestHandleTokenReceive(t *testing.T) {
 
 func TestHandleTokenValidate(t *testing.T) {
 	svc := service.NewJWTService([]byte("secret-key"))
-	srv := NewHTTPService(svc, "localhost:3000")
+	srv := NewHTTPServer(svc, "localhost:3000")
 	tkn, _ := svc.Token(context.Background(), []byte("some payload"))
 
 	tests := map[string]struct {

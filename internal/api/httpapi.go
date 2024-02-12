@@ -28,7 +28,7 @@ type Body struct {
 }
 
 // Constructs new HTTPServer that signs and validates tokens via HTTP.
-func NewHTTPService(svc types.TokenService, addr string) *HTTPServer {
+func NewHTTPServer(svc types.TokenService, addr string) *HTTPServer {
 	return &HTTPServer{
 		svc: svc,
 		srv: &http.Server{
