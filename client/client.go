@@ -37,7 +37,6 @@ func (c *HTTPClient) Token(ctx context.Context, payload []byte) (*types.TokenRes
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Println("aboba")
 		return nil, err
 	}
 
@@ -45,7 +44,6 @@ func (c *HTTPClient) Token(ctx context.Context, payload []byte) (*types.TokenRes
 		var httpErr api.HTTPErrResponse
 		err := json.NewDecoder(resp.Body).Decode(&httpErr)
 		if err != nil {
-			fmt.Println("aboba")
 			return nil, err
 		}
 
