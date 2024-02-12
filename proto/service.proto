@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "github.com/danblok/auth/proto";
+
+service TokenService {
+    rpc Token(TokenRequest) returns(TokenResponse);
+    rpc Validate(ValidateRequest) returns(ValidateResponse);
+}
+
+message TokenRequest {
+    string Payload = 1;
+}
+
+message TokenResponse {
+    string Token = 1;
+}
+
+message ValidateRequest {
+    string Token = 1;
+}
+
+message ValidateResponse {
+    bool Valid = 1;
+}
