@@ -21,6 +21,12 @@ type HTTPServer struct {
 // HTTP helper handler func.
 type HTTPHandlerFunc func(context.Context, http.ResponseWriter, *http.Request) error
 
+// body represents the body
+// of a request to receive a token.
+type Body struct {
+	Payload string `json:"payload"`
+}
+
 // Constructs new HTTPServer that signs and validates tokens via HTTP.
 func NewHTTPService(svc types.TokenService, addr string) *HTTPServer {
 	return &HTTPServer{
@@ -70,11 +76,7 @@ func (s *HTTPServer) handleTokenValidation(ctx context.Context, w http.ResponseW
 
 // Handles token receive.
 func (s *HTTPServer) handleTokenRecieve(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	type body struct {
-		Payload string `json:"payload"`
-	}
-
-	var b body
+	var b Body
 	err := json.NewDecoder(r.Body).Decode(&b)
 	if err != nil {
 		return err
