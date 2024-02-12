@@ -36,13 +36,13 @@ func (s jwtTokenService) Validate(_ context.Context, token []byte) error {
 }
 
 // Issues new token with given body.
-func (s jwtTokenService) Sign(_ context.Context, body []byte) ([]byte, error) {
+func (s jwtTokenService) Token(_ context.Context, payload []byte) ([]byte, error) {
 	claims := &JWTClaim{
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  &jwt.NumericDate{Time: time.Now()},
 			ExpiresAt: &jwt.NumericDate{Time: time.Now().AddDate(0, 0, 1)},
 		},
-		Payload: string(body),
+		Payload: string(payload),
 	}
 
 	tkn := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

@@ -24,7 +24,7 @@ func NewLoggingService(svc types.TokenService) types.TokenService {
 }
 
 // Logs time since start, request_id, err and a new token to stdout.
-func (s *loggingService) Sign(ctx context.Context, body []byte) (token []byte, err error) {
+func (s *loggingService) Token(ctx context.Context, payload []byte) (token []byte, err error) {
 	defer func(t time.Time) {
 		s.log.InfoContext(
 			ctx,
@@ -38,7 +38,7 @@ func (s *loggingService) Sign(ctx context.Context, body []byte) (token []byte, e
 		)
 	}(time.Now())
 
-	return s.svc.Sign(ctx, body)
+	return s.svc.Token(ctx, payload)
 }
 
 // Logs time since start, request_id, err if validation failed

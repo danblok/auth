@@ -26,7 +26,7 @@ func main() {
 	srv := api.NewHTTPService(svc, *addr)
 	log.Printf("started server on http://localhost%s\n", *addr)
 	log.Printf(`available routes:
-	receive token: POST http://localhost%s/token
+	receive token: POST http://localhost%s/token {"payload": "mypayload"}
 	validate token: GET http://localhost%s/validate?token=<your_token>`, *addr, *addr)
 	if err := srv.Run(); err != nil {
 		log.Fatal("couldn't start the server")

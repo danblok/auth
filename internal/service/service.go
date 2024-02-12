@@ -32,7 +32,7 @@ func (s *tokenService) Validate(ctx context.Context, token []byte) error {
 	return s.validate(ctx, token)
 }
 
-// Sign function for TokenService.
-func (s *tokenService) Sign(ctx context.Context, body []byte) ([]byte, error) {
-	return s.sign(ctx, body)
+// Token function for TokenService.
+func (s *tokenService) Token(ctx context.Context, payload []byte) ([]byte, error) {
+	return s.sign(ctx, payload)
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -37,7 +36,7 @@ func NewHTTPService(svc types.TokenService, addr string) *HTTPServer {
 // Runs the HTTPServer
 func (s *HTTPServer) Run() error {
 	mux := http.NewServeMux()
-	mux.Handle("POST /token", makeHTTPHandler(s.handleTokenSign))
+	mux.Handle("POST /token", makeHTTPHandler(s.handleTokenRecieve))
 	mux.Handle("GET /validate", makeHTTPHandler(s.handleTokenValidation))
 	s.srv.Handler = mux
 
@@ -70,9 +69,9 @@ func (s *HTTPServer) handleTokenValidation(ctx context.Context, w http.ResponseW
 }
 
 // Handles token sign.
-func (s *HTTPServer) handleTokenSign(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func (s *HTTPServer) handleTokenRecieve(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	type body struct {
-		Msg string `json:"msg"`
+		Payload string `json:"payload"`
 	}
 
 	var b body
@@ -81,9 +80,8 @@ func (s *HTTPServer) handleTokenSign(ctx context.Context, w http.ResponseWriter,
 		return err
 	}
 	r.Body.Close()
-	log.Println(b)
 
-	token, err := s.svc.Sign(ctx, []byte(b.Msg))
+	token, err := s.svc.Token(ctx, []byte(b.Payload))
 	if err != nil {
 		return err
 	}
