@@ -69,7 +69,7 @@ func (s *HTTPServer) handleTokenValidation(ctx context.Context, w http.ResponseW
 
 	err := s.svc.Validate(ctx, []byte(token))
 	if err != nil {
-		return writeJSON(w, http.StatusBadRequest, types.TokenValidationResponse{Valid: false})
+		return writeJSON(w, http.StatusOK, types.TokenValidationResponse{Valid: false})
 	}
 	return writeJSON(w, http.StatusOK, types.TokenValidationResponse{Valid: true})
 }
