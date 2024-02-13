@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TokenService_Token_FullMethodName    = "/TokenService/Token"
-	TokenService_Validate_FullMethodName = "/TokenService/Validate"
+	TokenService_Token_FullMethodName    = "/service.TokenService/Token"
+	TokenService_Validate_FullMethodName = "/service.TokenService/Validate"
 )
 
 // TokenServiceClient is the client API for TokenService service.
@@ -129,7 +129,7 @@ func _TokenService_Validate_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TokenService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "TokenService",
+	ServiceName: "service.TokenService",
 	HandlerType: (*TokenServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

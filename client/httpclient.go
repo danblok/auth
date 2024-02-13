@@ -11,12 +11,13 @@ import (
 	"github.com/danblok/auth/pkg/types"
 )
 
-// HTTP client of TokenService.
+// HTTPClient implements HTTP client
+// to communicate with TokenService HTTP server.
 type HTTPClient struct {
 	host string
 }
 
-// Constructs a new HTTPClient with given host of the Token service server.
+// NewHTPPClient constructs a new HTTPClient with given host of the Token service server.
 func NewHTPPClient(host string) *HTTPClient {
 	return &HTTPClient{
 		host: host,

@@ -12,22 +12,22 @@ import (
 	"github.com/danblok/auth/pkg/types"
 )
 
-// HTTP API implementation for TokenService.
+// HTTPServer implementation for TokenService.
 type HTTPServer struct {
 	svc types.TokenService
 	srv *http.Server
 }
 
-// HTTP helper handler func.
+// HTTPHandlerFunc is a helper handler func.
 type HTTPHandlerFunc func(context.Context, http.ResponseWriter, *http.Request) error
 
-// body represents the body
+// Body represents the body
 // of a request to receive a token.
 type Body struct {
 	Payload string `json:"payload"`
 }
 
-// Constructs new HTTPServer that signs and validates tokens via HTTP.
+// NewHTTPServer constructs new HTTPServer that signs and validates tokens via HTTP.
 func NewHTTPServer(svc types.TokenService, addr string) *HTTPServer {
 	return &HTTPServer{
 		svc: svc,
@@ -39,7 +39,7 @@ func NewHTTPServer(svc types.TokenService, addr string) *HTTPServer {
 	}
 }
 
-// Runs the HTTPServer
+// Run starts the HTTPServer
 func (s *HTTPServer) Run() error {
 	mux := http.NewServeMux()
 	mux.Handle("POST /token", makeHTTPHandler(s.handleTokenReceive))

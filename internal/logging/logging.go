@@ -15,7 +15,7 @@ type loggingService struct {
 	log *slog.Logger
 }
 
-// Constructor of logging token service.
+// NewLoggingService creates logging for TokenService.
 func NewLoggingService(svc types.TokenService) types.TokenService {
 	return &loggingService{
 		svc: svc,
@@ -23,7 +23,8 @@ func NewLoggingService(svc types.TokenService) types.TokenService {
 	}
 }
 
-// Logs time since start, request_id, err and a new token to stdout.
+// Token passes call to Token to the next TokenService implmentator
+// and logs time since start, request_id, err and a new token to stdout.
 func (s *loggingService) Token(ctx context.Context, payload []byte) (token []byte, err error) {
 	defer func(t time.Time) {
 		s.log.InfoContext(
@@ -41,7 +42,8 @@ func (s *loggingService) Token(ctx context.Context, payload []byte) (token []byt
 	return s.svc.Token(ctx, payload)
 }
 
-// Logs time since start, request_id, err if validation failed.
+// Validate passes call to Validate to the next TokenService implmentator
+// and logs time since start, request_id, err if validation failed.
 func (s *loggingService) Validate(ctx context.Context, token []byte) (err error) {
 	defer func(t time.Time) {
 		s.log.InfoContext(

@@ -9,7 +9,7 @@ import (
 	"github.com/danblok/auth/pkg/types"
 )
 
-// JWT claim with support for payload.
+// JWTClaim that supports payload.
 type JWTClaim struct {
 	Payload string `json:"payload"`
 	jwt.RegisteredClaims
@@ -20,7 +20,7 @@ type jwtTokenService struct {
 	key []byte
 }
 
-// Constructs TokenService implementation.
+// NewJWTService creates a JWT TokenService implementation.
 func NewJWTService(key []byte) types.TokenService {
 	return &jwtTokenService{
 		key: key,
@@ -29,7 +29,7 @@ func NewJWTService(key []byte) types.TokenService {
 
 // Validates given token.
 func (s jwtTokenService) Validate(_ context.Context, token []byte) error {
-	_, err := jwt.Parse(string(token), func(t *jwt.Token) (interface{}, error) {
+	_, err := jwt.Parse(string(token), func(_ *jwt.Token) (interface{}, error) {
 		return []byte(s.key), nil
 	}, jwt.WithValidMethods([]string{"HS256"}))
 

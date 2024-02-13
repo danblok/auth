@@ -19,7 +19,7 @@ type signFunc func(context.Context, []byte) ([]byte, error)
 // Custom validation func type.
 type validationFunc func(context.Context, []byte) error
 
-// Constructor for a bare TokenService with ability to create your own sign and validation functions.
+// NewTokenService creates a bare TokenService with ability to create your own sign and validation functions.
 func NewTokenService(sign signFunc, validate validationFunc) types.TokenService {
 	return &tokenService{
 		sign:     sign,

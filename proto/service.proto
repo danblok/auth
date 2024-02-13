@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package service;
+
 option go_package = "github.com/danblok/auth/proto";
 
 service TokenService {
@@ -8,17 +10,17 @@ service TokenService {
 }
 
 message TokenRequest {
-    string Payload = 1;
+    string payload = 1;
 }
 
 message TokenResponse {
-    string Token = 1;
+    string token = 1;
 }
 
 message ValidateRequest {
-    string Token = 1;
+    string token = 1;
 }
 
 message ValidateResponse {
-    bool Valid = 1;
+    bool valid = 1;
 }
