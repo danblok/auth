@@ -2,12 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/danblok/auth/pkg/types"
 )
+
+var errNotVaildToken = errors.New("token not valid")
 
 // JWTClaim that supports payload.
 type JWTClaim struct {
@@ -29,9 +32,12 @@ func NewJWTService(key []byte) types.TokenService {
 
 // Validates given token.
 func (s jwtTokenService) Validate(_ context.Context, token []byte) error {
-	_, err := jwt.Parse(string(token), func(_ *jwt.Token) (interface{}, error) {
+	tkn, err := jwt.Parse(string(token), func(_ *jwt.Token) (interface{}, error) {
 		return []byte(s.key), nil
 	}, jwt.WithValidMethods([]string{"HS256"}))
+	if !tkn.Valid {
+		return errNotVaildToken
+	}
 
 	return err
 }

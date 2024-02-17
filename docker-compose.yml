@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   server:
     container_name: server
@@ -10,7 +9,6 @@ services:
       - jwt_key
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
-
 secrets:
   jwt_key:
     file: ${JWT_KEY_PATH}
