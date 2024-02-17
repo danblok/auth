@@ -30,9 +30,9 @@ func (s *GRPCTokenServer) Serve(addr string) error {
 	if err != nil {
 		return err
 	}
+	defer ln.Close()
 
-	opts := []grpc.ServerOption{}
-	grpcServer := grpc.NewServer(opts...)
+	grpcServer := grpc.NewServer()
 	proto.RegisterTokenServiceServer(grpcServer, s)
 
 	return grpcServer.Serve(ln)

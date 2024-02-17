@@ -5,22 +5,22 @@ package service;
 option go_package = "github.com/danblok/auth/proto";
 
 service TokenService {
-    rpc Token(TokenRequest) returns(TokenResponse);
-    rpc Validate(ValidateRequest) returns(ValidateResponse);
+  rpc Token(TokenRequest) returns (TokenResponse);
+  rpc Validate(ValidateRequest) returns (ValidateResponse);
 }
 
 message TokenRequest {
-    string payload = 1;
+  string payload = 1;
 }
 
 message TokenResponse {
-    string token = 1;
+  string token = 1;
 }
 
 message ValidateRequest {
-    string token = 1;
+  string token = 1;
 }
 
 message ValidateResponse {
-    bool valid = 1;
+  bool valid = 1;
 }
