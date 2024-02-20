@@ -1,8 +1,8 @@
 # Authentication microservice
 
-The goal of the project is to explore microservice nature in the form of authentication service that allows the client to receive JWT tokens and check for their validity.
+The goal of the project is to explore the microservice nature in the form of an authentication service that allows the client to receive JWT tokens and check their validity.
 
-Every part of the service is independent of each other. All of them are using `TokenService` interface. It allows to inject a new layer like logging, transport layer, different business logic, cache or something else easily.
+Every part of the service is independent of each other. All parts are using `TokenService` interface. It allows to inject a new layer like logging, transport layer, different business logic, cache or something else easily.
 
 ## What is the project consists of
 - HTTP and GRPC servers
