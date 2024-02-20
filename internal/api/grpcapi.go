@@ -2,10 +2,12 @@ package api
 
 import (
 	"context"
+	"crypto/tls"
 	"net"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	"github.com/danblok/auth/pkg/types"
 	"github.com/danblok/auth/proto"
@@ -24,7 +26,7 @@ func NewGRPCServer(svc types.TokenService) *GRPCTokenServer {
 	}
 }
 
-// Serve runs grpc server.
+// Serve runs GRPC server.
 func (s *GRPCTokenServer) Serve(addr string) error {
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -33,6 +35,24 @@ func (s *GRPCTokenServer) Serve(addr string) error {
 	defer ln.Close()
 
 	grpcServer := grpc.NewServer()
+	proto.RegisterTokenServiceServer(grpcServer, s)
+
+	return grpcServer.Serve(ln)
+}
+
+// ServeTLS runs GRPC server with TLS.
+func (s *GRPCTokenServer) ServeTLS(addr string, cert tls.Certificate) error {
+	opts := []grpc.ServerOption{
+		grpc.Creds(credentials.NewServerTLSFromCert(&cert)),
+	}
+
+	ln, err := net.Listen("tcp", addr)
+	if err != nil {
+		return err
+	}
+	defer ln.Close()
+
+	grpcServer := grpc.NewServer(opts...)
 	proto.RegisterTokenServiceServer(grpcServer, s)
 
 	return grpcServer.Serve(ln)

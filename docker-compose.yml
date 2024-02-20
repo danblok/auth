@@ -7,8 +7,17 @@ services:
       target: server
     secrets:
       - jwt_key
+      - ca_cert
+      - server_cert
+      - server_key
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
 secrets:
   jwt_key:
     file: ${JWT_KEY_PATH}
+  ca_cert:
+    file: ${CA_CERT_PATH}
+  server_cert:
+    file: ${SERVER_CERT_PATH}
+  server_key:
+    file: ${SERVER_KEY_PATH}

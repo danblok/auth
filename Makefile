@@ -2,7 +2,7 @@ build:
 	@go build -o ./bin/server ./cmd/server/main.go
 
 run: build
-	@./bin/server -http=:4000 -grpc=:4001 -keypath "jwt"
+	@./bin/server -http=:4000 -grpc=:4001 -jwtkey "data/jwt" -cacert "data/ca.crt" -srvcert "data/server.crt" -srvkey "data/server.key"
 
 test:
 	go test -v -cover ./...

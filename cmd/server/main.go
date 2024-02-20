@@ -1,27 +1,33 @@
 package main
 
 import (
-	"context"
+	"crypto/tls"
 	"flag"
+	"fmt"
 	"log"
 	"os"
-	"time"
 
-	"github.com/danblok/auth/client"
+	"golang.org/x/sync/errgroup"
+
 	"github.com/danblok/auth/internal/api"
 	"github.com/danblok/auth/internal/logging"
 	"github.com/danblok/auth/internal/service"
-	"github.com/danblok/auth/proto"
+)
+
+var (
+	httpAddr       = flag.String("http", ":3000", "Listen addr of the http server")
+	grpcAddr       = flag.String("grpc", ":4000", "Listen addr of the grpc server")
+	jwtKeyPath     = flag.String("jwtkey", "/run/secrets/jwt_key", "Key path of a signing jwt key")
+	caCertPath     = flag.String("cacert", "/run/secrets/ca_cert", "CA certificate path")
+	serverCertPath = flag.String("srvcert", "/run/secrets/server_cert", "Server certificate path")
+	serverKeyPath  = flag.String("srvkey", "/run/secrets/server_key", "Server private key path")
 )
 
 func main() {
-	httpAddr := flag.String("http", ":3000", "listen addr of the http server")
-	grpcAddr := flag.String("grpc", ":4000", "listen addr of the grpc server")
-	keyPath := flag.String("keypath", "/run/secrets/jwt_key", "key path of a signing jwt key")
-	ctx := context.Background()
 	flag.Parse()
 
-	key, err := os.ReadFile(*keyPath)
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	key, err := os.ReadFile(*jwtKeyPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,36 +35,34 @@ func main() {
 	svc := service.NewJWTService([]byte(key))
 	svc = logging.NewLoggingService(svc)
 
-	grpcClient, err := client.NewGRPCClient(*grpcAddr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	eg := new(errgroup.Group)
 
-	go func() {
-		for {
-			time.Sleep(2 * time.Second)
-			tokenResp, err := grpcClient.Token(ctx, &proto.TokenRequest{Payload: "some payload"})
-			if err != nil {
-				log.Fatal(err)
-			}
-			log.Printf("%+v\n", tokenResp)
-
-			validateResp, err := grpcClient.Validate(ctx, &proto.ValidateRequest{Token: "aoenuth"})
-			if err != nil {
-				log.Fatal(err)
-			}
-			log.Printf("%+v\n", validateResp)
+	eg.Go(func() error {
+		cert, err := tls.LoadX509KeyPair(*serverCertPath, *serverKeyPath)
+		if err != nil {
+			return err
 		}
-	}()
+		log.Printf("started GRPC server on [::]%s", *grpcAddr)
+		return api.NewGRPCServer(svc).ServeTLS(*grpcAddr, cert)
+	})
 
-	go api.NewGRPCServer(svc).Serve(*grpcAddr)
+	eg.Go(func() error {
+		cert, err := tls.LoadX509KeyPair(*serverCertPath, *serverKeyPath)
+		if err != nil {
+			return err
+		}
+		httpServer, err := api.NewHTTPServerTLS(svc, *httpAddr, cert)
+		if err != nil {
+			return fmt.Errorf("couldn't create a new HTTP server: %v", err)
+		}
+		log.Printf("started HTTP server on [::]%s\n", *httpAddr)
+		log.Printf(`available routes:
+	receive token: POST [::]%s/token {"payload": "mypayload"}
+	validate token: GET [::]%s/validate?token=<your_token>`, *httpAddr, *httpAddr)
+		return httpServer.Run()
+	})
 
-	httpServer := api.NewHTTPServer(svc, *httpAddr)
-	log.Printf("started server on http://localhost%s\n", *httpAddr)
-	log.Printf(`available routes:
-	receive token: POST http://localhost%s/token {"payload": "mypayload"}
-	validate token: GET http://localhost%s/validate?token=<your_token>`, *httpAddr, *httpAddr)
-	if err := httpServer.Run(); err != nil {
-		log.Fatal("couldn't start the server")
+	if err := eg.Wait(); err != nil {
+		log.Fatal(err)
 	}
 }

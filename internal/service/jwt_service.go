@@ -35,11 +35,15 @@ func (s jwtTokenService) Validate(_ context.Context, token []byte) error {
 	tkn, err := jwt.Parse(string(token), func(_ *jwt.Token) (interface{}, error) {
 		return []byte(s.key), nil
 	}, jwt.WithValidMethods([]string{"HS256"}))
+	if err != nil {
+		return err
+	}
+
 	if !tkn.Valid {
 		return errNotVaildToken
 	}
 
-	return err
+	return nil
 }
 
 // Issues new token with given body.

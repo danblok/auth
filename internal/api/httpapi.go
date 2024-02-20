@@ -2,12 +2,14 @@ package api
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/net/http2"
 
 	"github.com/danblok/auth/pkg/types"
 )
@@ -16,6 +18,7 @@ import (
 type HTTPServer struct {
 	svc types.TokenService
 	srv *http.Server
+	tls bool
 }
 
 // HTTPHandlerFunc is a helper handler func.
@@ -36,7 +39,29 @@ func NewHTTPServer(svc types.TokenService, addr string) *HTTPServer {
 			ReadTimeout: 3 * time.Second,
 			IdleTimeout: 3 * time.Second,
 		},
+		tls: false,
 	}
+}
+
+// NewHTTPServerTLS constructs new HTTPServer that signs and validates tokens via HTTP securely.
+func NewHTTPServerTLS(svc types.TokenService, addr string, cert tls.Certificate) (*HTTPServer, error) {
+	srv := &http.Server{
+		Addr:        addr,
+		ReadTimeout: 3 * time.Second,
+		IdleTimeout: 3 * time.Second,
+		TLSConfig:   &tls.Config{Certificates: []tls.Certificate{cert}},
+	}
+
+	err := http2.ConfigureServer(srv, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &HTTPServer{
+		svc: svc,
+		tls: true,
+		srv: srv,
+	}, nil
 }
 
 // Run starts the HTTPServer
@@ -45,6 +70,10 @@ func (s *HTTPServer) Run() error {
 	mux.Handle("POST /token", makeHTTPHandler(s.handleTokenReceive))
 	mux.Handle("GET /validate", makeHTTPHandler(s.handleTokenValidation))
 	s.srv.Handler = mux
+
+	if s.tls {
+		return s.srv.ListenAndServeTLS("", "")
+	}
 
 	return s.srv.ListenAndServe()
 }

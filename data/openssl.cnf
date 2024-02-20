@@ -1,0 +1,12 @@
+[req]
+default_md = sha256
+promt = no
+req_extensions=server_ext
+distinguished_name = req_distinguished_name
+
+[req_distinguished_name]
+CN = localhost
+
+[server_ext]
+subjectAltName = DNS:localhost
+
