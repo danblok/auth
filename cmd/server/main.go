@@ -18,7 +18,6 @@ var (
 	httpAddr       = flag.String("http", ":3000", "Listen addr of the http server")
 	grpcAddr       = flag.String("grpc", ":4000", "Listen addr of the grpc server")
 	jwtKeyPath     = flag.String("jwtkey", "/run/secrets/jwt_key", "Key path of a signing jwt key")
-	caCertPath     = flag.String("cacert", "/run/secrets/ca_cert", "CA certificate path")
 	serverCertPath = flag.String("srvcert", "/run/secrets/server_cert", "Server certificate path")
 	serverKeyPath  = flag.String("srvkey", "/run/secrets/server_key", "Server private key path")
 )
