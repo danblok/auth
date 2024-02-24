@@ -20,6 +20,7 @@ go get github.com/danblok/auth/client
 
 ## How to use
 Make sure you have the `.env` file in your root directory with env vars like in `.env.example`.
+
 Start with Docker Compose
 ```
 docker compose up
